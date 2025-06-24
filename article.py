@@ -640,6 +640,15 @@ def generate_html(output_root: Path):
     
     # Write index.html
     index_html = INDEX_TEMPLATE.format(cards='\n'.join(cards))
+
+    # For root index.html, adjust all asset and article paths to be prefixed with 'html_output/'
+    index_html_root = index_html.replace('assets/', 'html_output/assets/').replace('articles/', 'html_output/articles/')
+    # Fix image src paths from '../images_out/' to 'html_output/assets/images/'
+    index_html_root = index_html_root.replace('src="../images_out/', 'src="html_output/assets/images/')
+
+    # Write index.html to the project root (outside html_output) with adjusted paths
+    Path('index.html').write_text(index_html_root, encoding='utf-8')
+    # Also write index.html to output_root for reference (with normal paths)
     (output_root / 'index.html').write_text(index_html, encoding='utf-8')
     
     print(f"Generated {len(all_articles)} articles")
